@@ -1,20 +1,25 @@
+// modelo válido, porém não otimizado
 // let titulo = document.querySelector('h1');
 // titulo.innerHTML = 'Jogo do Número Secreto';
 
 // let paragrafo = document.querySelector('p');
 // paragrafo.innerHTML = 'Escolha um número entre 1 e 10'
 
+let listaNumerosSorteados = [];
+let numeroLimite = 10;
 let numeroSecreto = gerarNumeroAleatorio();
 let tentativas = 1;
 
 function exibirTextoNaTela(tag,texto) {
     let campo = document.querySelector(tag);
     campo.innerHTML = texto;
+    // leitura do texto do jogo
+    responsiveVoice.speak(texto, 'Brazilian Portuguese Female', {rate:1.2});
 }
 
 function exibirMensagemInicial() {
     exibirTextoNaTela('h1', 'Jogo do Número Secreto');
-    exibirTextoNaTela('p', 'Escolha um número entre 1 e 100');
+    exibirTextoNaTela('p', 'Escolha um número entre 1 e ' + numeroLimite);
 }
 
 exibirMensagemInicial();
@@ -42,14 +47,30 @@ function verificarChute() {
 }
 
 function gerarNumeroAleatorio() {
-    return parseInt(Math.random() * 10 + 1);
+    let numeroEscolhido = parseInt(Math.random() * numeroLimite + 1);
+    let quantidadeElementosLista = listaNumerosSorteados.length;
+
+    if (quantidadeElementosLista == numeroLimite) {
+        listaNumerosSorteados = [];
+    }
+
+    if (listaNumerosSorteados.includes(numeroEscolhido)) {
+        return gerarNumeroAleatorio();
+    } else {
+        // o push aqui tem a função de adicionar o numero escolhido a lista dos que já foram sorteados
+        listaNumerosSorteados.push(numeroEscolhido);
+        console.log(listaNumerosSorteados);
+        return numeroEscolhido;
+    }
 }
 
+// objetivo: limpar o campo de input após
 function limparCampo() {
     chute = document.querySelector('input');
     chute.value = '';
 }
 
+// função que é habilitada somente após a finalização do jogo
 function reiniciarJogo() {
     numeroSecreto = gerarNumeroAleatorio();
     limparCampo();
